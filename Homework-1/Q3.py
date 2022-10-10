@@ -2,7 +2,7 @@
 
 from sqlalchemy import create_engine
 engine = create_engine(
-    "mysql+pymysql://colin:watermelon@localhost:3306/newSailors", echo = True)
+    "mysql+pymysql://colin:(password)@localhost:3306/newSailors", echo = True)
 connection = engine.connect()
 # print(connection.execute("SELECT * from sailors").fetchall())
 
