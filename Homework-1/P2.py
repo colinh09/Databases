@@ -116,7 +116,8 @@ class Testclass:
         for i in sqlResult:
             sqlOutput.append(i)
         redBoats = s.query(Boat.bid).filter(Boat.color == "red")
-        orm = s.query(Sailor.sid, Sailor.sname).filter(Sailor.sid.notin_(s.query(Reservation.sid).filter(Reservation.bid.in_(redBoats))))
+        sidRedBoats = s.query(Reservation.sid).filter(Reservation.bid.in_(redBoats))
+        orm = s.query(Sailor.sid, Sailor.sname).filter(Sailor.sid.notin_(sidRedBoats))
         ormOutput = []
         for i in orm:
             ormOutput.append(i)
@@ -132,10 +133,3 @@ class Testclass:
         ormOutput = []
         for i in orm:
             ormOutput.append(i)
-    
-
-
-
-# Show that results from sql queries match orm queries
-
-#
