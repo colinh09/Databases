@@ -29,7 +29,7 @@ The second table is called employees. This table is simple with only two columns
 | ename | varchar(30) | YES  |     | NULL    |       |
 +-------+-------------+------+-----+---------+-------+
 
-To add on to the two new tables, I needed to add two new columns to boats, which include an employee id column and its repair id.
+To add on to the two new tables, I needed to add two new columns to boats, which include an employee id column and its repair id. This way, we can identify if the boat has/has not been repaired yet and which employee was responsible for it.
 
 +--------+----------+------+-----+---------+-------+
 | Field  | Type     | Null | Key | Default | Extra |
@@ -42,4 +42,7 @@ To add on to the two new tables, I needed to add two new columns to boats, which
 | rid    | int      | YES  |     | NULL    |       |
 +--------+----------+------+-----+---------+-------+
 
+In my ORM, I show functionality by printing out the two employees that still have not repaired their boats assigned to them (Carl and Robert), and I also print out the employee's eid with the least boats repaired (Robert has a eid of 4 with 4 boats left unrepaired). 
+
+Note: I should have used pytest to test the ORM, but for some reason, pytest was not recogizing my assert statements, and I was running out of time to submit this assignment.
 
