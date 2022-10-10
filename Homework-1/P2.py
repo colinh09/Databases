@@ -89,9 +89,9 @@ class Testclass:
         for i in sqlResult:
             sqlOutput.append(i)
 
-        reservedRed = s.query(Boat.bid).filter(Boat.color == "red")
-        num_reserved = reservedRed.count()
-        orm = s.query(Sailor.sid, Sailor.sname).filter(Reservation.bid.in_(reservedRed)).filter(Reservation.sid == Sailor.sid).group_by(Reservation.sid).having(func.count(distinct(Reservation.bid)) == num_reserved)
+        redBoats = s.query(Boat.bid).filter(Boat.color == "red")
+        numRedBoats = redBoats.count()
+        orm = s.query(Sailor.sid, Sailor.sname).filter(Reservation.bid.in_(redBoats)).filter(Reservation.sid == Sailor.sid).group_by(Reservation.sid).having(func.count(distinct(Reservation.bid)) == numRedBoats)
         ormOutput = []
         for i in orm:
             ormOutput.append(i)
@@ -115,8 +115,8 @@ class Testclass:
         sqlOutput = []
         for i in sqlResult:
             sqlOutput.append(i)
-        reservedRed = s.query(Boat.bid).filter(Boat.color == "red")
-        orm = s.query(Sailor.sid, Sailor.sname).filter(Sailor.sid.notin_(s.query(Reservation.sid).filter(Reservation.bid.in_(reservedRed))))
+        redBoats = s.query(Boat.bid).filter(Boat.color == "red")
+        orm = s.query(Sailor.sid, Sailor.sname).filter(Sailor.sid.notin_(s.query(Reservation.sid).filter(Reservation.bid.in_(redBoats))))
         ormOutput = []
         for i in orm:
             ormOutput.append(i)
