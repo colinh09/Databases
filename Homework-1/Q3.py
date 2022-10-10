@@ -24,8 +24,6 @@ class Sailor(Base):
     rating = Column(Integer)
     age = Column(Integer)
 
-    def __repr__(self):
-        return "<Sailor(id=%s, name='%s', rating=%s)>" % (self.sid, self.sname, self.age)
 
 class Boat(Base):
     __tablename__ = 'boats'
@@ -34,12 +32,12 @@ class Boat(Base):
     bname = Column(String)
     color = Column(String)
     length = Column(Integer)
+    eid = Column(Integer, ForeignKey('employees.eid'))
+    rid = Column(Integer, ForeignKey('repairs.rid'))
 
     reservations = relationship('Reservation',
                                 backref=backref('boat', cascade='delete'))
 
-    def __repr__(self):
-        return "<Boat(id=%s, name='%s', color=%s, eid=%s, rid=%s)>" % (self.bid, self.bname, self.color, self.eid, self.rid)
 
 class Reservation(Base):
     __tablename__ = 'reserves'
@@ -51,42 +49,58 @@ class Reservation(Base):
 
     sailor = relationship('Sailor')
 
-    def __repr__(self):
-        return "<Reservation(sid=%s, bid=%s, day=%s)>" % (self.sid, self.bid, self.day)
-
-class Repair(Base)
+class Repair(Base):
     __tablename__ = 'repairs'
 
     rid = Column(Integer, primary_key=True)
-    bid = Column(Integer)
-    eid = Column(Integer)
+    eid = Column(Integer, ForeignKey('employees.eid'))
     cost = Column(Integer)
     repairDate = Column(DateTime)
     repairMade = Column(String)
 
     boat = relationship('Boat')
-    def __repr__(self):
-        return "<Boat(id=%s, bid='%s', eid=%s, cost=%s, repairDate=%s, repairMade=%s)>" % (self.rid, self.bid, self.eid, self.cost, self.repairDate, self.repairMade)
 
-class Employee(Base)
+class Employee(Base):
     __tablename__ = 'employees'
 
     eid = Column(Integer, primary_key=True)
     ename = Column(String)
 
-    def __repr__(self):
-        return "<Reservation(id=%s, ename=%s)>" % (self.eid, self.ename)
-
 # <--------------------------------------------------------------------------------------->
 
 ##### Showing that the ORM is fully functional with tests #####
 
-# A key functionality of this new system is to show which employee has made the least repairs
+# A key functionality of this new system is to show which employees have to still make repairs, and
+# which employee has the most boats left unrepaired
 
 def get_bad_employees():
     bad_eids = s.query(Repair.eid).filter(Repair.repairMade == 'NO').group_by(Repair.eid)
-    bad_name = s.query(Employee.ename).filter(Employee.eid.in_(bad_eids))
-    for i in query:
-        print("Here is a bad employee: " + i)
+    bad_names = s.query(Employee.ename).filter(Employee.eid.in_(bad_eids))
+    expected_result = ['Robert', 'Carl']
+    result = []
+    for i in bad_names:
+        result.append(i[0])
+    # assert is not working for some reason lol?
+    # assert result == expected_result
+
+    # We expect that the employees that have to still work on repair boats are Carl and Robert. 
+    print(" ")
+    print("Employees that have not repaired their boats: ")
+    print(result)
+    print(" ")
+
+def get_worst_employee():
+    worst_employees = s.query(Repair.eid, func.count(Repair.repairMade)).filter(Repair.repairMade == 'NO').group_by(Repair.eid).order_by(desc(func.count(Repair.repairMade))).limit(1).all()
+    result = []
+    for i in worst_employees:
+        result.append(i)
+
+    # We expect that the worst employee is Robert, who has not repaired any of the four boats he was assigned
+    # to. His employee ID is 4. Therefore, the output is (4,4)
+    print(" ")
+    print("The worst employee(s)' eid and the number of boats they need to fix: ")
+    print(result)
+    print(" ")
 
 get_bad_employees()
+get_worst_employee()

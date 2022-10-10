@@ -95,6 +95,7 @@ class Testclass:
         ormOutput = []
         for i in orm:
             ormOutput.append(i)
+        assert sqlOutput == ormOutput
 
     # Question 4: For which boat has the most reservations?
     def test_three_Q4(self):
@@ -103,10 +104,11 @@ class Testclass:
         sqlOutput = []
         for i in sqlResult:
             sqlOutput.append(i)
-        orm = s.query(Boat.bname, Reservation.bid, func.count(Reservation.bid)).filter(Boat.bid == Reservation.bid).group_by(Reservation.bid).limit(1)
+        orm = s.query(Boat.bname, Reservation.bid, func.count(Reservation.bid)).filter(Boat.bid == Reservation.bid).group_by(Reservation.bid).order_by(desc(func.count(Reservation.bid))).limit(1).all()
         ormOutput = []
         for i in orm:
             ormOutput.append(i)
+        assert sqlOutput == ormOutput
 
     # Question 5: Select all sailors who have never reserved a red boat
     def test_four_Q5(self):
@@ -121,6 +123,7 @@ class Testclass:
         ormOutput = []
         for i in orm:
             ormOutput.append(i)
+        assert sqlOutput == ormOutput
 
     # Question 6: Find the average age of sailors with a rating of 10
     def test_five_Q6(self):
@@ -133,3 +136,4 @@ class Testclass:
         ormOutput = []
         for i in orm:
             ormOutput.append(i)
+        assert sqlOutput == ormOutput
