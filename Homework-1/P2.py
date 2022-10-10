@@ -1,20 +1,22 @@
 # Problem 2 from Problem Set 1 of ECE464 - Databases
 
-# up to line  was taken from Professor Sokolov's sailors ORM
-# used the code to step up a connection, a session so that changes can be made, a base to use for each
-# class, and definition of classes (sailors, boats, reservations) to map to my sailor database
 from sqlalchemy import create_engine
 engine = create_engine(
-    "mysql+pymysql://colin:@localhost:3306/sailors", echo = True)
+    "mysql+pymysql://colin:watermelon@localhost:3306/sailors", echo = True)
 connection = engine.connect()
-
 # print(connection.execute("SELECT * from sailors").fetchall())
-set_trace()
+
+# GETTING TABLES, MAKE SESSION, IMPORTS 
+# The majority of setting up the ORM was with the help of Professor Sokolov's sailors example ORM
+# https://github.com/eugsokolov/ece464-databases/blob/master/sailors/sailors.py
+# <--------------------------------------------------------------------------------------->
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, String, Column, DateTime, PrimaryKeyConstraint, ForeignKey, 
+from sqlalchemy import Integer, String, Column, DateTime, ForeignKey, PrimaryKeyConstraint, func, desc, select, distinct
 from sqlalchemy.orm import backref, relationship, sessionmaker
 
-Base = declarative_base
+session = sessionmaker(bind=engine)
+s = session()
+Base = declarative_base()
 
 class Sailor(Base):
     __tablename__ = 'sailors'
@@ -53,6 +55,87 @@ class Reservation(Base):
 
     def __repr__(self):
         return "<Reservation(sid=%s, bid=%s, day=%s)>" % (self.sid, self.bid, self.day)
+# <--------------------------------------------------------------------------------------->
 
-session = sessionmaker(bind=engine)
-s = session()
+##### Showing that the ORM is fully functional with tests #####
+
+
+# Show that ORM queries match expected SQL queries through random tests
+class Testclass:
+    # Skipped testing a few of the question for time sake and my sanity
+
+    # Question 1: List, for every boat, the number of times it has been reserved, excluding
+    # those boats that have never been reserved
+    def test_one_Q1(self):
+        sql = "SELECT B.bid, B.bname, COUNT(*) as numReserve FROM boats B, reserves R WHERE B.bid = R.bid GROUP BY B.bid HAVING numReserve > 0;"
+        sqlResult = connection.execute(sql)
+        sqlOutput = []
+        for i in sqlResult:
+            sqlOutput.append(i)
+
+        orm = s.query(Reservation.bid, Boat.bname, func.count(Reservation.bid)).filter(Reservation.bid == Boat.bid).group_by(Reservation.bid, Boat.bname)
+        # orm = s.query(Reservation.bid, func.count("*")).group_by(Reservation.bid).having(func.count("*") > 0)
+        ormOutput = []
+        for i in orm:
+            ormOutput.append(i)
+
+        assert sqlOutput == ormOutput
+
+    # Question 2: List those sailors who have reserved every red boat (list their id and the name)
+    def test_two_Q2(self):
+        sql = "SELECT S.sname, S.sid FROM sailors S WHERE NOT EXISTS ( SELECT B.bid FROM boats B WHERE B.color='red' AND NOT EXISTS (SELECT * FROM reserves R WHERE R.bid = B.bid AND R.sid = S.sid))"
+        sqlResult = connection.execute(sql)
+        sqlOutput = []
+        for i in sqlResult:
+            sqlOutput.append(i)
+
+        reservedRed = s.query(Boat.bid).filter(Boat.color == "red")
+        num_reserved = reservedRed.count()
+        orm = s.query(Sailor.sid, Sailor.sname).filter(Reservation.bid.in_(reservedRed)).filter(Reservation.sid == Sailor.sid).group_by(Reservation.sid).having(func.count(distinct(Reservation.bid)) == num_reserved)
+        ormOutput = []
+        for i in orm:
+            ormOutput.append(i)
+
+    # Question 4: For which boat has the most reservations?
+    def test_three_Q4(self):
+        sql = "SELECT B.bname, B.bid, COUNT(*) as numReserve FROM boats B, reserves R WHERE B.bid = R.bid GROUP BY B.bid ORDER BY numReserve DESC LIMIT 1;"
+        sqlResult = connection.execute(sql)
+        sqlOutput = []
+        for i in sqlResult:
+            sqlOutput.append(i)
+        orm = s.query(Boat.bname, Reservation.bid, func.count(Reservation.bid)).filter(Boat.bid == Reservation.bid).group_by(Reservation.bid).limit(1)
+        ormOutput = []
+        for i in orm:
+            ormOutput.append(i)
+
+    # Question 5: Select all sailors who have never reserved a red boat
+    def test_four_Q5(self):
+        sql = "SELECT S.sid, S.sname FROM sailors as S WHERE S.sid NOT IN (SELECT R.sid FROM reserves as R INNER JOIN boats as B ON R.bid = B.bid WHERE B.color = 'red');"
+        sqlResult = connection.execute(sql)
+        sqlOutput = []
+        for i in sqlResult:
+            sqlOutput.append(i)
+        reservedRed = s.query(Boat.bid).filter(Boat.color == "red")
+        orm = s.query(Sailor.sid, Sailor.sname).filter(Sailor.sid.notin_(s.query(Reservation.sid).filter(Reservation.bid.in_(reservedRed))))
+        ormOutput = []
+        for i in orm:
+            ormOutput.append(i)
+
+    # Question 6: Find the average age of sailors with a rating of 10
+    def test_five_Q6(self):
+        sql = "SELECT AVG(S.age) FROM sailors S WHERE S.rating = 10;"
+        sqlResult = connection.execute(sql)
+        sqlOutput = []
+        for i in sqlResult:
+            sqlOutput.append(i)
+        orm = s.query(func.avg(Sailor.age)).filter(Sailor.rating == 10).all()
+        ormOutput = []
+        for i in orm:
+            ormOutput.append(i)
+    
+
+
+
+# Show that results from sql queries match orm queries
+
+#
