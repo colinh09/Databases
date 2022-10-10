@@ -1,0 +1,18 @@
+Colin Hwang
+ECE464 - Databases
+Question 3 Write Up
+
+To expand the code base and aid the boat rental buisiness, I decided to add
+an inventory repair tracker, which keeps track of which boat's repair history. If a boat is need or is scheduled to get a repair, an employee will get assigned to the boat. This will allow the buisness to keep track if employees are doing their job of repairing boats properly and on a timely manner. The cost of the repair will also be tracked for the buisiness' finances. 
+
+To do this, I added two new tables
+
+The first table is called repairs. Repairs will have five columns: the repair id, the boat id, the employee id, the cost of the repair, when the repair is scheduled, and whether the repair was made.
+
+
+The second table is called employees. This table is simple with only three columns: the employee id, the boat id, and the repair id. This way, the buisness will be able to identify both if an employee has repaired a specific boat or how many boats has the employee repaired. 
+
+
+To add on to the two new tables, I needed to add two new columns to boats, which include an employee id column and its repair id.
+
+
