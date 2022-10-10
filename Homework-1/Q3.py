@@ -1,4 +1,4 @@
-# Problem 2 from Problem Set 1 of ECE464 - Databases
+# Problem 3 from Problem Set 1 of ECE464 - Databases
 
 from sqlalchemy import create_engine
 engine = create_engine(
@@ -39,7 +39,7 @@ class Boat(Base):
                                 backref=backref('boat', cascade='delete'))
 
     def __repr__(self):
-        return "<Boat(id=%s, name='%s', color=%s)>" % (self.bid, self.bname, self.color, self.)
+        return "<Boat(id=%s, name='%s', color=%s, eid=%s, rid=%s)>" % (self.bid, self.bname, self.color, self.eid, self.rid)
 
 class Reservation(Base):
     __tablename__ = 'reserves'
@@ -53,6 +53,40 @@ class Reservation(Base):
 
     def __repr__(self):
         return "<Reservation(sid=%s, bid=%s, day=%s)>" % (self.sid, self.bid, self.day)
+
+class Repair(Base)
+    __tablename__ = 'repairs'
+
+    rid = Column(Integer, primary_key=True)
+    bid = Column(Integer)
+    eid = Column(Integer)
+    cost = Column(Integer)
+    repairDate = Column(DateTime)
+    repairMade = Column(String)
+
+    boat = relationship('Boat')
+    def __repr__(self):
+        return "<Boat(id=%s, bid='%s', eid=%s, cost=%s, repairDate=%s, repairMade=%s)>" % (self.rid, self.bid, self.eid, self.cost, self.repairDate, self.repairMade)
+
+class Employee(Base)
+    __tablename__ = 'employees'
+
+    eid = Column(Integer, primary_key=True)
+    ename = Column(String)
+
+    def __repr__(self):
+        return "<Reservation(id=%s, ename=%s)>" % (self.eid, self.ename)
+
 # <--------------------------------------------------------------------------------------->
 
 ##### Showing that the ORM is fully functional with tests #####
+
+# A key functionality of this new system is to show which employee has made the least repairs
+
+def get_bad_employees():
+    bad_eids = s.query(Repair.eid).filter(Repair.repairMade == 'NO').group_by(Repair.eid)
+    bad_name = s.query(Employee.ename).filter(Employee.eid.in_(bad_eids))
+    for i in query:
+        print("Here is a bad employee: " + i)
+
+get_bad_employees()
