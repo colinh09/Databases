@@ -14,9 +14,9 @@ create table reserves(
 
 create table boats(
     bid int PRIMARY KEY,
-	bname char(20),
-	color char(10),
-	length int
+    bname char(20),
+    color char(10),
+    length int,
     eid int,
     rid int
 );
@@ -27,15 +27,13 @@ create table repairs(
     eid int,
     cost int,
     repairDate date,
-    repairMade char(3),
-)
+    repairMade char(3)
+);
 
 create table employees(
     eid int PRIMARY KEY,
     ename varchar(30),
-    bid int,
-    rid int
-)
+);
 
 insert into sailors values (22,'dusting',7,45);
 insert into sailors values (29,'brutus',1,33);
@@ -100,7 +98,7 @@ insert into boats values (108,'Driftwood','red', 35, 6, 11);
 insert into boats values (109,'Driftwood','blue', 35, 4, 2);
 insert into boats values (110,'Klapser','red', 30, 4, 4);
 insert into boats values (111,'Sooney','green', 28, 2, 5);
-insert into boats values (112,'Sooney','red', 28, 4, 1, 4, 8);
+insert into boats values (112,'Sooney','red', 28, 4, 8);
 
 insert into repairs value(1, 112, 4, 120, '2020/1/5', 'NO');
 insert into repairs value(2, 109, 4, 130, '2020/1/6', 'NO');
@@ -116,16 +114,9 @@ insert into repairs value(11, 108, 6, 130, '2020/1/24', 'YES');
 insert into repairs value(12, 102, 3, 120, '2020/1/26', 'YES');
 insert into repairs value(13, 104, 6, 130, '2020/1/30', 'YES');
 
-insert into employees value(1, 'Fred', 106, 3);
-insert into employees value(2, 'Carl', 111, 5);
-insert into employees value(3, 'Stanley', 101, 7);
-insert into employees value(4, 'Robert', 112, 1);
-insert into employees value(5, 'Carl', 103, 10);
-insert into employees value(4, 'Robert', 109, 2);
-insert into employees value(4, 'Robert', 104, 4);
-insert into employees value(4, 'Robert', 110, 8);
-insert into employees value(3, 'Stanley', 105, 6);
-insert into employees value(1, 'Fred', 107, 9);
-insert into employees value(6, 'Eugene', 108, 11);
-insert into employees value(3, 'Stanley', 102, 12);
-insert into employees value(6, 'Eugene', 104, 13);
+insert into employees value(1, 'Fred');
+insert into employees value(2, 'Carl');
+insert into employees value(3, 'Stanley');
+insert into employees value(4, 'Robert');
+insert into employees value(5, 'Carl');
+insert into employees value(6, 'Eugene');

@@ -7,12 +7,39 @@ an inventory repair tracker, which keeps track of which boat's repair history. I
 
 To do this, I added two new tables
 
-The first table is called repairs. Repairs will have five columns: the repair id, the boat id, the employee id, the cost of the repair, when the repair is scheduled, and whether the repair was made.
+The first table is called repairs. Repairs will have six columns: the repair id, the boat id, the employee id, the cost of the repair, when the repair is scheduled, and whether the repair was made.
 
++------------+---------+------+-----+---------+-------+
+| Field      | Type    | Null | Key | Default | Extra |
++------------+---------+------+-----+---------+-------+
+| rid        | int     | NO   | PRI | NULL    |       |
+| bid        | int     | YES  |     | NULL    |       |
+| eid        | int     | YES  |     | NULL    |       |
+| cost       | int     | YES  |     | NULL    |       |
+| repairDate | date    | YES  |     | NULL    |       |
+| repairMade | char(3) | YES  |     | NULL    |       |
++------------+---------+------+-----+---------+-------+
 
-The second table is called employees. This table is simple with only three columns: the employee id, the boat id, and the repair id. This way, the buisness will be able to identify both if an employee has repaired a specific boat or how many boats has the employee repaired. 
+The second table is called employees. This table is simple with only two columns: employee id and employee name. This table exists just to identify employees by their id.
 
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| eid   | int         | NO   | PRI | NULL    |       |
+| ename | varchar(30) | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
 
 To add on to the two new tables, I needed to add two new columns to boats, which include an employee id column and its repair id.
+
++--------+----------+------+-----+---------+-------+
+| Field  | Type     | Null | Key | Default | Extra |
++--------+----------+------+-----+---------+-------+
+| bid    | int      | NO   | PRI | NULL    |       |
+| bname  | char(20) | YES  |     | NULL    |       |
+| color  | char(10) | YES  |     | NULL    |       |
+| length | int      | YES  |     | NULL    |       |
+| eid    | int      | YES  |     | NULL    |       |
+| rid    | int      | YES  |     | NULL    |       |
++--------+----------+------+-----+---------+-------+
 
 
