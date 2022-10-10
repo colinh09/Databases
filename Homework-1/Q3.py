@@ -39,7 +39,7 @@ class Boat(Base):
                                 backref=backref('boat', cascade='delete'))
 
     def __repr__(self):
-        return "<Boat(id=%s, name='%s', color=%s)>" % (self.bid, self.bname, self.color)
+        return "<Boat(id=%s, name='%s', color=%s)>" % (self.bid, self.bname, self.color, self.)
 
 class Reservation(Base):
     __tablename__ = 'reserves'
